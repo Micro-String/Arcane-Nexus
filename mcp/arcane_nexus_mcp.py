@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
-"""Portable Stdio MCP Server wrapping libarcane_nexus.so (Arcane-Nexus SDK)."""
+"""Zero-dependency Stdio MCP Server wrapping libarcane_nexus.so (Arcane-Nexus SDK)."""
 import ctypes
 import json
 import os
 import sys
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-LIB_PATH = os.environ.get("ARCANE_NEXUS_LIB", os.path.join(ROOT, "lib", "libarcane_nexus.so"))
-SNAP_PATH = os.environ.get("ARCANE_NEXUS_SNAPSHOT", "/tmp/arcane_nexus_mcp_crash.bin")
+LIB_PATH = "/home/xixian/Silent_SRE_Agent/gen3_memory/libarcane_nexus.so"
+SNAP_PATH = "/tmp/arcane_nexus_mcp_crash.bin"
 
 lib = ctypes.CDLL(LIB_PATH)
 lib.InitializeSDK.argtypes = [ctypes.c_char_p]
@@ -28,6 +27,7 @@ lib.DeleteMemory.restype = ctypes.c_int
 
 
 def _init_sdk_quietly() -> int:
+    # Redirect C stdout briefly to stderr during InitializeSDK so MCP JSON-RPC stdout stays clean
     saved_fd = os.dup(1)
     try:
         os.dup2(2, 1)
@@ -40,7 +40,7 @@ def _init_sdk_quietly() -> int:
 TOOLS = [
     {
         "name": "recall_memory",
-        "description": "Arcane-Nexus Memory-First recall. Always query before answering from model weights.",
+        "description": "Arcane-Nexus Memory-First recall. Always query this before answering from model weights.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -52,7 +52,7 @@ TOOLS = [
     },
     {
         "name": "store_memory",
-        "description": "Store or overwrite a neuron memory node in Arcane-Nexus (in-RAM Zero-Disk).",
+        "description": "Store or overwrite a neuron memory node in Arcane-Nexus (strictly in-RAM Zero-Disk).",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -81,7 +81,9 @@ TOOLS = [
         "description": "Clear and recycle a mutable neuron slot for reuse (Node 0 factory rules are protected).",
         "inputSchema": {
             "type": "object",
-            "properties": {"node_key": {"type": "string", "description": "Neuron key to clear"}},
+            "properties": {
+                "node_key": {"type": "string", "description": "Neuron key to clear and recycle"},
+            },
             "required": ["node_key"],
         },
     },
@@ -96,21 +98,29 @@ def _call_tool(name: str, args: dict) -> str:
         hit = ctypes.c_int(0)
         lib.RecallMemory(q, layer, buf, len(buf), ctypes.byref(hit))
         txt = buf.value.decode("utf-8", errors="replace")
-        return f"[hit={hit.value}]\n{txt}" if txt else f"[hit={hit.value}] (no match)"
+        return f"[hit={hit.value}]\n{txt}" if txt else f"[hit={hit.value}] (無匹配記憶)"
+
     if name == "store_memory":
         k = str(args.get("node_key", "")).encode("utf-8")
         c = str(args.get("content", "")).encode("utf-8")
         l = str(args.get("layer", "general")).encode("utf-8")
-        return "STORED_OK" if lib.StoreMemory(k, l, c, 0) == 1 else "STORE_DENIED"
+        ok = lib.StoreMemory(k, l, c, 0)
+        return "STORED_OK" if ok == 1 else "STORE_DENIED"
+
     if name == "process_batch_relay":
         tk = str(args.get("task_key", "")).encode("utf-8")
         ch = str(args.get("chunk", "")).encode("utf-8")
         l = str(args.get("layer", "task_flow")).encode("utf-8")
         n = lib.ProcessBatchRelay(tk, l, ch, buf, len(buf))
-        return "RELAY_ERROR" if n < 0 else buf.value.decode("utf-8", errors="replace")
+        if n < 0:
+            return "RELAY_ERROR"
+        return buf.value.decode("utf-8", errors="replace")
+
     if name == "delete_memory":
         k = str(args.get("node_key", "")).encode("utf-8")
-        return "DELETED_AND_RECYCLED" if lib.DeleteMemory(k) == 1 else "DELETE_DENIED"
+        ok = lib.DeleteMemory(k)
+        return "DELETED_AND_RECYCLED" if ok == 1 else "DELETE_DENIED"
+
     return f"UNKNOWN_TOOL: {name}"
 
 
@@ -123,6 +133,7 @@ def main() -> None:
     if _init_sdk_quietly() != 0:
         sys.stderr.write("[Arcane-Nexus MCP] InitializeSDK failed\n")
         sys.exit(1)
+
     try:
         for raw in sys.stdin:
             line = raw.strip()
@@ -132,7 +143,11 @@ def main() -> None:
                 req = json.loads(line)
             except json.JSONDecodeError:
                 continue
-            req_id, method, params = req.get("id"), req.get("method", ""), req.get("params") or {}
+
+            req_id = req.get("id")
+            method = req.get("method", "")
+            params = req.get("params") or {}
+
             if method == "initialize":
                 _send({
                     "jsonrpc": "2.0",
@@ -148,8 +163,14 @@ def main() -> None:
             elif method == "tools/list":
                 _send({"jsonrpc": "2.0", "id": req_id, "result": {"tools": TOOLS}})
             elif method == "tools/call":
-                text = _call_tool(params.get("name", ""), params.get("arguments") or {})
-                _send({"jsonrpc": "2.0", "id": req_id, "result": {"content": [{"type": "text", "text": text}]}})
+                tname = params.get("name", "")
+                targs = params.get("arguments") or {}
+                text = _call_tool(tname, targs)
+                _send({
+                    "jsonrpc": "2.0",
+                    "id": req_id,
+                    "result": {"content": [{"type": "text", "text": text}]},
+                })
             elif req_id is not None:
                 _send({"jsonrpc": "2.0", "id": req_id, "result": {}})
     finally:
