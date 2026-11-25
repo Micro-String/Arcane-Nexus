@@ -1,5 +1,7 @@
 # Arcane-Nexus SDK (`v1.1.0`) — Micro-String
 
+[![Core Engine](https://img.shields.io/badge/Core_Engine-C%2B%2B23_Binary_SDK-00599C?style=flat-square&logo=cplusplus&logoColor=white)]() [![Zero GPU](https://img.shields.io/badge/Compute-Zero--GPU_Pure_CPU-00B4D8?style=flat-square)]() [![Latency](https://img.shields.io/badge/Recall_Latency-%3C_1_ms-7B2CBF?style=flat-square)]() [![MCP](https://img.shields.io/badge/Protocol-MCP_Supported-10B981?style=flat-square)]()
+
 ![Arcane-Nexus-Memory Architecture](docs/memory_architecture.jpg)
 
 > **Universal In-RAM Neuron Memory Engine** | Pure C++23 Core (`libarcane_nexus.so`), Zero Third-Party Dependencies, Standard C ABI for C++ / Python / Rust / Go / MCP Agents.
