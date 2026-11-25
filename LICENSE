@@ -1,0 +1,23 @@
+Arcane-Nexus-Memory Non-Commercial Binary SDK License
+Copyright (c) 2026 Micro-String. All rights reserved.
+
+1. Permitted Use (Non-Commercial Only)
+Permission is hereby granted, free of charge, to any individual or academic entity
+to download, run, and integrate the compiled Arcane-Nexus-Memory SDK binaries and
+accompanying MCP bridge strictly for personal learning, evaluation, and
+non-commercial research purposes.
+
+2. Commercial Use Prohibited (不得商用)
+Commercial use of any kind is STRICTLY PROHIBITED without an explicit written
+commercial license agreement from the copyright holder (Micro-String).
+Prohibited commercial activities include, but are not limited to:
+- Selling, reselling, sublicensing, or redistributing the SDK or derivative products for profit;
+- Embedding the SDK into paid SaaS platforms, commercial AI agents, or enterprise products;
+- Using the SDK to provide paid hosting, consulting, or commercial API services.
+
+3. Reverse Engineering Prohibited
+Decompiling, disassembling, patching, or attempting to bypass built-in integrity
+or security gates is strictly prohibited.
+
+4. Disclaimer
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.
