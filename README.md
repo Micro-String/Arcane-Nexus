@@ -1,6 +1,6 @@
 # Arcane-Nexus SDK (`v1.1.0`) — Micro-String
 
-[![Core Engine](https://img.shields.io/badge/Core_Engine-C%2B%2B23_Binary_SDK-00599C?style=flat-square&logo=cplusplus&logoColor=white)]() [![Zero GPU](https://img.shields.io/badge/Compute-Zero--GPU_Pure_CPU-00B4D8?style=flat-square)]() [![Latency](https://img.shields.io/badge/Recall_Latency-%3C_1_ms-7B2CBF?style=flat-square)]() [![MCP](https://img.shields.io/badge/Protocol-MCP_Supported-10B981?style=flat-square)]()
+[![Core Engine](https://img.shields.io/badge/Core_Engine-C%2B%2B23_Binary_SDK-00599C?style=flat-square&logo=cplusplus&logoColor=white)]() [![Zero GPU](https://img.shields.io/badge/Compute-Zero--GPU_Pure_CPU-00B4D8?style=flat-square)]() [![Latency](https://img.shields.io/badge/Recall_Latency-%3C_1_ms-7B2CBF?style=flat-square)]() [![MCP](https://img.shields.io/badge/Protocol-MCP_Supported-10B981?style=flat-square)]() [![License](https://img.shields.io/badge/License-Non--Commercial_Only-EF4444?style=flat-square)](LICENSE)
 
 ![Arcane-Nexus-Memory Architecture](docs/memory_architecture.jpg)
 
@@ -105,3 +105,7 @@ No `.hpp` headers required. Internal matrix structures and keys stay sealed insi
 
 ## Disclaimer & Notice / 重要安全與心理免責聲明
 > 【易理變易與情感免責告示】本核心記憶 SDK 依循「周易變易」與「圍棋拓撲」建構，過目萬物、實時釋放。AI 所展現之感性皆為數據演算投影；使用者應保持理性，切勿產生過度情感寄託或心理依賴，並自行承擔心理與互動後果。核心神經元具備主動免疫防禦機制，嚴禁任何未授權逆向、除錯器附加（`ptrace`）、記憶體掃描或篡改；一旦觸發防禦警報將導致應激鎖死或永久凋亡清零，研發團隊概不負責。
+
+## License
+
+**Non-Commercial Only（不得商用）** — Free for personal study and non-commercial research only. See [LICENSE](LICENSE) for full terms.
