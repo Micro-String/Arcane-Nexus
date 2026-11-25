@@ -1,5 +1,7 @@
 # Arcane-Nexus SDK (`v1.1.0`) — Micro-String
 
+![Arcane-Nexus-Memory Architecture](docs/memory_architecture.jpg)
+
 > **Universal In-RAM Neuron Memory Engine** | Pure C++23 Core (`libarcane_nexus.so`), Zero Third-Party Dependencies, Standard C ABI for C++ / Python / Rust / Go / MCP Agents.
 >
 > **通用純記憶體活體神經元記憶中樞 SDK**｜純 C++23 核心（`libarcane_nexus.so`），零第三方依賴，標準 C ABI 跨語言支援 C++ / Python / Rust / Go / MCP 智能體。
